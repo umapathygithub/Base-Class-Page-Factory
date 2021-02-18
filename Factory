@@ -1,0 +1,174 @@
+package org.flipkart.utils;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class Common {
+	public static WebDriver driver= null;
+	
+	public static String browserlaunch (String browser) {
+	switch (browser) {
+	case "chrome":
+		System.setProperty("webdriver.chrome.driver", "C:\\Users\\umapathy\\eclipse-workspace\\BaseClass\\Driver\\chromedriver.exe");
+		driver=new ChromeDriver();
+		break;
+	case "firefox":
+		System.setProperty("webdriver.chrome.driver", "C:\\Users\\umapathy\\eclipse-workspace\\BaseClass\\Driver\\chromedriver.exe");
+		 driver=new ChromeDriver();
+		break;
+	default:
+		System.setProperty("webdriver.chrome.driver", "C:\\Users\\umapathy\\eclipse-workspace\\BaseClass\\Driver\\chromedriver.exe");
+		driver=new ChromeDriver();
+		break;
+	}
+	return browser;
+	}
+
+
+public static void browserMax() {
+	driver.manage().window().maximize();
+}
+public static void loadURL(String url) {
+	driver.get(url);
+}
+
+public static WebElement element(String xpath) {
+WebElement findelement=driver.findElement(By.xpath(xpath));
+return findelement;
+}
+
+
+public static void type(WebElement element, String data) {
+	element.sendKeys(data);
+}
+
+public static WebElement  element(By name) {
+	 return driver.findElement(name);
+}
+
+public static WebElement  element_click(By name) {
+	 return driver.findElement(name);
+}
+}
+-----------------------------------------------------------------------
+package org.flipkart.pagefactory;
+
+import org.flipkart.utils.Common;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class HomPage_Factory extends Common {
+
+	public HomPage_Factory() {
+		PageFactory.initElements(driver, this);
+	}
+
+	@FindBy(id = "email")
+	public WebElement userName;
+	
+	@FindBy(id = "pass")
+	public WebElement password;
+
+	public WebElement getUserName() {
+		return userName;
+	}
+	
+	public WebElement getPassword() {
+		return password;
+	}
+
+}
+---------------------------------------------------------
+package org.flipkart.utils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+public class ExcelUtil {
+	public static String getdata(int rownum, int cellnum) throws IOException {
+		File f=new File("C:\\Users\\umapathy\\eclipse-workspace\\BaseClass\\Excel\\New Practice.xlsx");
+		String stringCellValue=null;
+		try {
+			FileInputStream fi=new FileInputStream(f);
+			Workbook wb=new XSSFWorkbook(fi);
+			Sheet sh=wb.getSheet("Sheet1");
+			Row row=sh.getRow(rownum);
+			Cell cell = row.getCell(cellnum);
+			 stringCellValue = cell.getStringCellValue();
+				FileOutputStream fo = new FileOutputStream(f);
+				wb.write(fo);
+				wb.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return stringCellValue;
+	}
+
+}package org.flipkart.execution;
+
+import org.flipkart.utils.Common;
+
+public class FinalExecution extends HomPage_Execution {
+	static FinalExecution fe= new FinalExecution();
+	
+	public static void browserDetail(){
+		Common.browserlaunch("chrome");
+		Common.loadURL("https://www.facebook.com/");
+		Common.browserMax();
+	}
+	
+	public void positive_flow() {
+		browserDetail();
+		fe.login_Username_Password_Positive();
+	}
+	
+	public void negative_flow() {
+		browserDetail();
+		fe.login_Username_Password_Negative();
+	}
+	public static void main(String[] args) {
+		fe.positive_flow();
+		fe.negative_flow();
+		
+	}
+
+}
+--------------------------------------------
+
+-------------------------------------------------------
+package org.flipkart.execution;
+
+import org.flipkart.pagefactory.HomPage_Factory;
+import org.flipkart.utils.Common;
+
+public class HomPage_Execution extends HomPage_Factory{
+
+	public void login_Username_Password_Positive() {
+		HomPage_Execution hP= new HomPage_Execution();
+		Common.type(hP.getUserName(), "shahul");
+		Common.type(hP.getPassword(), "hameed");
+	}
+	
+	public void login_Username_Password_Negative() {
+		HomPage_Execution hP= new HomPage_Execution();
+		Common.type(hP.getUserName(), "shahul");
+		Common.type(hP.getPassword(), "");
+	}
+}
+
+----------------------------------------------
+
